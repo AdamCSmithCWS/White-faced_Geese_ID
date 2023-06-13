@@ -1360,26 +1360,7 @@ text(x = dfni$lrl[which.min(pli$fit > 0.5)],
      paste0(round(dfni$lrl[which.min(pli$fit > 0.5)]),"mm ",p),
      col = "purple")
 
-# text(x = dfna$lrl[which.min(pla$fit > 0.5)],
-#      y = 1.5,
-#      pos = 4,
-#      paste0("Adult ",round(dfna$lrl[which.min(pla$fit > 0.5)]),"mm ",round(aderror,2)*100,"%"),
-#      col = "darkorange")
-# text(x = dfni$lrl[which.min(pli$fit > 0.5)],
-#      y = 1.5,
-#      pos = 2,
-#      paste0("Immature ",round(dfni$lrl[which.min(pli$fit > 0.5)]),"mm ",round(imerror,2)*100,"%"),
-#      col = "purple")
-# text(x = dfna$lrl[which.min(pla$fit > 0.5)],
-#      y = 1.4,
-#      pos = 4,
-#      paste0("CANG ",round(adcangerror,2)*100,"% CACK ",round(adcackerror,2)*100,"%"),
-#      col = "darkorange")
-# text(x = dfni$lrl[which.min(pli$fit > 0.5)],
-#      y = 1.4,
-#      pos = 2,
-#      paste0("CANG ",round(imcangerror,2)*100,"% CACK ",round(imcackerror,2)*100,"%"),
-#      col = "purple")
+
 
 
 
@@ -2248,9 +2229,9 @@ rsout[,"missid.by.feather"] <- "no"
   rsout[which(rsout$species != rsout$`species.by.feather`),"missid.by.feather"] <- "yes"
 
   
-histogram(~pspecies.by.feather | missid.by.feather,
-          data = rsout,
-          type =  "count")
+# histogram(~pspecies.by.feather | missid.by.feather,
+#           data = rsout,
+#           type =  "count")
 
 rsout[,"species.by.nhs"] <- "Branta canadensis"
 rsout[which(rsout$sporig == 1721),"species.by.nhs"] <- "Branta hutchinsii"
@@ -2299,6 +2280,9 @@ write.csv(row.names = F,
 
 
 
+
+
+# Random Forest -----------------------------------------------------------
 
 
 
@@ -2405,91 +2389,12 @@ usage <- varUsed(rf1)
 names(usage) <- names(rs4a)[-c(1,7,8)]
 
 rs4a[,"pred.rf1"] <- rf1$predicted
-# 
-# confmat <- table(rs4a[,c("species","pred.rf1","age")])
-# 
-# imcangfcack <- confmat["Branta canadensis","Branta hutchinsii","Immature"]
-# imcackfcang <- confmat["Branta hutchinsii","Branta canadensis","Immature"]
-# imerror <- sum(c(imcangfcack,imcackfcang))/sum(confmat[,,"Immature"])
-# imerror
-# #[1] 0.1342282
-# adcangfcack <- confmat["Branta canadensis","Branta hutchinsii","Adult"]
-# adcackfcang <- confmat["Branta hutchinsii","Branta canadensis","Adult"]
-# aderror <- sum(c(adcangfcack,adcackfcang))/sum(confmat[,,"Adult"])
-# aderror
-# #[1] 0.02901354
-# cangerror <- sum(c(adcangfcack,imcangfcack))/sum(confmat["Branta canadensis",,])
-# cangerror
-# #[1] 0.05697446
-# cackerror <- sum(c(adcackfcang,imcackfcang))/sum(confmat["Branta hutchinsii",,])
-# cackerror
-# #[1] 0.03821656
-# confmat
-# # , , age = Immature
-# # 
-# # pred.rf1
-# # species             Branta canadensis Branta hutchinsii
-# # Branta canadensis                59                18
-# # Branta hutchinsii                 2                70
-# # 
-# # , , age = Adult
-# # 
-# # pred.rf1
-# # species             Branta canadensis Branta hutchinsii
-# # Branta canadensis               421                11
-# # Branta hutchinsii                 4                81
-# 
-# 
-# table(rs4a[,c("species","pred.rf1")])
-# 
-# 
-# x11()
-# varImpPlot(rf1)
-# 
-# 
-# 
-# var.mod2 <- c("species","lrl","lrd","age")
-# rs5 <- na.omit(rs[which(rs$prov != "British Columbia"),var.mod2])
-# 
-# #### adults
-# rf2 <- randomForest(species~.,
-#                     data = rs5,
-#                     na.action = na.omit, 
-#                     importance = T, 
-#                     localImp = T,
-#                     sampsize = rep(ceiling(as.numeric(table(rs2$species)[2])*0.66),times = 2))
-# 
-# dfjm$predsp.rf2 <- predict(rf2,
-#                           newdata = dfjm,
-#                           type = "response")
-# plot(dfjm$species,dfjm$predsp.rf2)
-# #dfjm$predsp.rf <- "Branta canadensis"
-# #dfjm[which(dfjm$predicted.rf >= 0.5),"predsp.rf"] <- "Branta hutchinsii"
-# table(dfjm[,c("species","predsp.rf2","age")])
-# 
-# orig$predsp.rf2 <- predict(rf2,
-#                           newdata = orig,
-#                           type = "response")
-# plot(orig$species,orig$predsp.rf2)
-# #orig$predsp.rf <- "Branta canadensis"
-# #orig[which(orig$predicted.rf >= 0.5),"predsp.rf"] <- "Branta hutchinsii"
-# table(orig[,c("species","predsp.rf2","age")])
-# 
-# 
-# 
-# usage <- varUsed(rf2)
-# names(usage) <- names(rs5)[-1]
-# rs5[,"pred.rf1"] <- rf2$predicted
-# 
-# x11()
-# varImpPlot(rf2)
-# table(rs5[,c("species","pred.rf1")])
-# 
-# 
-# 
 
 
 ######### standard cart using rpart
+
+# standard cart using rpart -----------------------------------------------
+
 
 
 library(rpart)
@@ -2590,316 +2495,6 @@ write.csv(logreg,"modelsummary.csv",
 
 
 ###################### boxplot of the predicted probabilities of hutchinsii
-
-
-source("sphist func.r")
-
-pdf("predicted species histograms logistic.pdf")
-par(mfcol = c(9,2),
-    mar = c(0,1,0,0),
-    oma = c(5,4,3,1))
-
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.m2d",
-       dt = rs2d,
-       mod = m2d,
-       bksize = 0.05)
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.m2",
-       dt = rs2,
-       mod = m2,
-       bksize = 0.05)
-
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.m2s",
-       dt = rs2s,
-       mod = m2s,
-       bksize = 0.05)
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.m2ss",
-       dt = rs2ss,
-       mod = m2ss,
-       bksize = 0.05)
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.m1d",
-       dt = rs1d,
-       mod = m1d,
-       bksize = 0.05)
-
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.m1",
-       dt = rs1,
-       mod = m1,
-       bksize = 0.05)
-
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.m1s",
-       dt = rs1s,
-       mod = m1s,
-       bksize = 0.05)
-
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.m1ss",
-       dt = rs1ss,
-       mod = m1ss,
-       bksize = 0.05)
-dev.off()
-
-
-
-
-
-pdf("predicted species histograms random forest.pdf")
-par(mfcol = c(9,2),
-    mar = c(0,1,0,0),
-    oma = c(5,4,3,1))
-
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.rf1",
-       dt = rs4a,
-       mod = rf1,
-       bksize = 0.05)
-
-dev.off()
-
-
-
-pdf("predicted species histograms cart.pdf")
-par(mfcol = c(9,2),
-    mar = c(0,1,0,0),
-    oma = c(5,4,3,1))
-
-sphist(w = -0.2,
-       descr = "",
-       cola = c("red","blue"),
-       predcl = "predicted.treei",
-       dt = rs5d,
-       mod = mcart,
-       bksize = 0.05)
-
-dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 
-# 
-# 
-# 
-# 
-# ############### exploring adult only cart models
-# rs5d <- na.omit(rs[which(rs$age == "Adult"),var.mod])
-# 
-# mcarta <- rpart(species~lrl+lrd+dhunt+prov,
-#                data = rs5d,
-#                method = "class",
-#                control = rpart.control(minsplit = 10))
-# x11()
-# plot(mcarta,main = "Adult")
-# text(mcarta,use.n = T,cex = 0.7,minlength = 0)
-# printcp(mcarta)
-# 
-# 
-# dfjma <- dfjm[which(dfjm$age == "Adult"),]
-# dfjma$predsp.treea <- predict(mcarta,
-#                               newdata = dfjma,
-#                               type = "class")
-# plot(dfjma$species,dfjma$predsp.treea)
-# 
-# table(dfjma[,c("species","predsp.treea","age")])
-# 
-# 
-# 
-# origa <- orig[which(orig$age == "Adult"),]
-# origa$predsp.treea <- predict(mcarta,
-#                               newdata = origa,
-#                               type = "class")
-# plot(origa$species,origa$predsp.treea)
-# 
-# table(origa[,c("species","predsp.treea","age")])
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# ######### Bayesian CART ######### using tgp package                  
-# library(tgp)
-# preds <- c("lrl","long","dhunt","age")
-# 
-# rs6 <- na.omit(rs[,c("species",preds)])
-# rs6$age <- as.integer(rs6$age)-1
-# rs6$species <- as.integer(rs6$species)-1
-# 
-# 
-# X <- rs6[,preds]
-# Z <- rs6[,"species"]
-# #XX <- dat.ab[,c("Longest.Rectrix.Length","Longest.Rectrix.Unfeathered.Quill..Length","Longest.Rectrix.Quill.Dia","longitude","prov.kill0")]  
-# XX <- X
-# 
-# b <- bcart(X = X, 
-#            Z = Z,
-# #           XX = XX,
-#            BTE = c(20000, 100000, 5), 
-#            R = 50, 
-#            m0r1 = FALSE, 
-#            tree = c(0.5,10))##setting the beta to 10 here places emphasis on shallower trees
-# x11()
-# tgp.trees(b,heights = NULL, nodeinfo=T, print.levels = T)
-# 
-# rs6[,"pcack.bcart"] <- b$Zp.mean
-# rs6[which(b$Zp.mean >= 0.5),"pred.bcart"] <- "Branta hutchinsii"
-# rs6[which(b$Zp.mean < 0.5),"pred.bcart"] <- "Branta canadensis"
-# 
-# 
-# 
-# 
-# 
-# 
-# #############################alternative
-# 
-# 
-# preds <- c("lrl","long","lrd","age")
-# 
-# rs6d <- na.omit(rs[,c("species",preds)])
-# rs6d$age <- as.integer(rs6d$age)-1
-# rs6d$species <- as.integer(rs6d$species)-1
-# 
-# 
-# X <- rs6d[,preds]
-# Z <- rs6d[,"species"]
-# #XX <- dat.ab[,c("Longest.Rectrix.Length","Longest.Rectrix.Unfeathered.Quill..Length","Longest.Rectrix.Quill.Dia","longitude","prov.kill0")]  
-# XX <- X
-# 
-# bd <- bcart(X = X, 
-#            Z = Z,
-#            #           XX = XX,
-#            BTE = c(20000, 100000, 5), 
-#            R = 50, 
-#            m0r1 = FALSE, 
-#            tree = c(0.5,10))##setting the beta to 10 here places emphasis on shallower trees
-# x11()
-# tgp.trees(bd,heights = NULL, nodeinfo=T, print.levels = T)
-# 
-# rs6d[,"pcack.bcart"] <- bd$Zp.mean
-# rs6d[which(bd$Zp.mean >= 0.5),"pred.bcart"] <- "Branta hutchinsii"
-# rs6d[which(bd$Zp.mean < 0.5),"pred.bcart"] <- "Branta canadensis"
-# 
-# 
-# 
-# 
-# 
-# ############## playing with bcart parameters
-# 
-# psplit <- function(a = 0.5,b = 2,ds = 1:10){
-#   a*(1+ds)^-b
-#   }
-# 
-# 
-# aexp <- seq(0.1,3,by = 0.1)
-# 
-# difa <- list()
-# length(difa) <- length(aexp)
-# names(difa) <- as.character(aexp)
-# i = 0
-# for(j in aexp){
-#   i = i+1
-#   difa[[i]] <- psplit(a = j)
-#   difa[[i]] <- difa[[i]]/max(difa[[i]])
-# }
-# 
-# 
-# bexp <- seq(0.5,10,by = 0.5)
-# 
-# difb <- list()
-# length(difb) <- length(bexp)
-# names(difb) <- as.character(bexp)
-# i = 0
-# for(j in bexp){
-#   i = i+1
-#   difb[[i]] <- psplit(b = j)
-#   difb[[i]] <- difb[[i]]/max(difb[[i]])
-# }
-# ############## playing with bcart parameters
-# 
-# 
-# 
-# confmat <- table(rs6[,c("species","pred.bcart","age")])
-# 
-# imcangfcack <- confmat["Branta canadensis","Branta hutchinsii","Immature"]
-# imcackfcang <- confmat["Branta hutchinsii","Branta canadensis","Immature"]
-# imerror <- sum(c(imcangfcack,imcackfcang))/sum(confmat[,,"Immature"])
-# imerror
-# #[1] 0.182243
-# adcangfcack <- confmat["Branta canadensis","Branta hutchinsii","Adult"]
-# adcackfcang <- confmat["Branta hutchinsii","Branta canadensis","Adult"]
-# aderror <- sum(c(adcangfcack,adcackfcang))/sum(confmat[,,"Adult"])
-# aderror
-# #[1] 0.02755906
-# cangerror <- sum(c(adcangfcack,imcangfcack))/sum(confmat["Branta canadensis",,])
-# cangerror
-# #[1] 0.05964467
-# cackerror <- sum(c(adcackfcang,imcackfcang))/sum(confmat["Branta hutchinsii",,])
-# cackerror
-# #[1] 0.06914894
-# confmat
-# # , , age = Immature
-# # 
-# # pred.bcart
-# # species             Branta canadensis Branta hutchinsii
-# # Branta canadensis                95                37
-# # Branta hutchinsii                 2                80
-# # 
-# # , , age = Adult
-# # 
-# # pred.bcart
-# # species             Branta canadensis Branta hutchinsii
-# # Branta canadensis               646                10
-# # Branta hutchinsii                11                95
-# 
-# 
-# 
-
-
 
 
 
