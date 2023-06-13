@@ -1199,207 +1199,6 @@ for(a in levels(param.spaced$age)){
 
 
 
-
-
-
-# 
-# 
-# ### plotting the final logistic regression model
-# 
-# confmat <- table(rs4[,c("species","predsp","age")])
-# 
-# imcangfcack <- confmat["Branta canadensis","hutchinsii","Immature"]
-# imcackfcang <- confmat["Branta hutchinsii","canadensis","Immature"]
-# imerror <- sum(c(imcangfcack,imcackfcang))/sum(confmat[,,"Immature"])
-# imerror
-# #[1] 0.1746725 - similar to values from random forest below
-# imcangerror <- imcangfcack/sum(confmat["Branta canadensis",,"Immature"])
-# imcackerror <- imcackfcang/sum(confmat["Branta hutchinsii",,"Immature"])
-# 
-# adcangfcack <- confmat["Branta canadensis","hutchinsii","Adult"]
-# adcackfcang <- confmat["Branta hutchinsii","canadensis","Adult"]
-# aderror <- sum(c(adcangfcack,adcackfcang))/sum(confmat[,,"Adult"])
-# adcangerror <- adcangfcack/sum(confmat["Branta canadensis",,"Adult"])
-# adcackerror <- adcackfcang/sum(confmat["Branta hutchinsii",,"Adult"])
-# aderror
-# #[1] 0.02923264 - similar to values from random forest below
-# cangerror <- sum(c(adcangfcack,imcangfcack))/sum(confmat["Branta canadensis",,])
-# cangerror
-# # [1] 0.03206651
-# cackerror <- sum(c(adcackfcang,imcackfcang))/sum(confmat["Branta hutchinsii",,])
-# cackerror
-# # [1] 0.1778846
-# prop.table(table(rs4[,c("species","predsp")]),1)
-# confmat
-# # , , age = Immature
-# # 
-# # predsp
-# # species             canadensis hutchinsii
-# # Branta canadensis        125         16
-# # Branta hutchinsii         24         64
-# # 
-# # , , age = Adult
-# # 
-# # predsp
-# # species             canadensis hutchinsii
-# # Branta canadensis        690         11
-# # Branta hutchinsii         13        107
-# 
-# rs4[,"plotcol"] <- "purple"
-# rs4[which(rs4$age == "Adult"),"plotcol"] <- "darkorange"
-# rs4$spplot <- runif(length(rs4$species),-0.02,0.02)+as.integer(rs4$species)
-# 
-# 
-# dfna <- expand.grid(lrl = seq(min(rs4$lrl),max(rs4$lrl),by = 0.1),
-#                     age = "Adult")
-# dfni <- expand.grid(lrl = seq(min(rs4$lrl),max(rs4$lrl),by = 0.1),
-#                     age = "Immature")
-# pla <- predict(m4,newdata = dfna,se.fit = T,type = "response")
-# pli <- predict(m4,newdata = dfni,se.fit = T,type = "response")
-# 
-# 
-# x11()
-# plot(y = rs4$spplot,
-#      x = rs4$lrl,
-#      ylab = "",
-#      xlab = "Longest Rectrix Length",
-#      yaxt = "n",
-#      col = rs4$plotcol,
-#      bty = "l")
-# axis(side = 2,
-#      at = c(1,2),
-#      labels = c("CANG",
-#                 "CACK"),
-#      las = 1)
-# 
-# 
-# polygon(x = c(dfna$lrl,rev(dfna$lrl)),
-#         y = 1+c((pla$fit-1.96*pla$se.fit),rev(pla$fit+1.96*pla$se.fit)),
-#         col = alpha("darkorange",0.1),
-#         border = NA)
-# 
-# polygon(x = c(dfni$lrl,rev(dfni$lrl)),
-#         y = 1+c((pli$fit-1.96*pli$se.fit),rev(pli$fit+1.96*pli$se.fit)),
-#         col = alpha("purple",0.1),
-#         border = NA)
-# 
-# lines(y = 1+pla$fit,
-#       x = dfna$lrl,
-#       col = "darkorange",
-#       lwd = 2)
-# lines(y = 1+pli$fit,
-#       x = dfni$lrl,
-#       col = "purple",
-#       lwd = 2)
-# points(y = rs4$spplot,
-#        x = rs4$lrl,
-#        col = rs4$plotcol)
-# lines(x = rep(dfna$lrl[which.min(pla$fit > 0.5)],2),
-#       y = c(1,2),
-#       col = alpha("darkorange",0.5))
-# lines(x = rep(dfni$lrl[which.min(pli$fit > 0.5)],2),
-#       y = c(1,2),
-#       col = alpha("purple",0.5))
-# text(x = dfna$lrl[which.min(pla$fit > 0.5)],
-#      y = 1.5,
-#      pos = 4,
-#      paste0("Adult ",round(dfna$lrl[which.min(pla$fit > 0.5)]),"mm ",round(aderror,2)*100,"%"),
-#      col = "darkorange")
-# text(x = dfni$lrl[which.min(pli$fit > 0.5)],
-#      y = 1.5,
-#      pos = 2,
-#      paste0("Immature ",round(dfni$lrl[which.min(pli$fit > 0.5)]),"mm ",round(imerror,2)*100,"%"),
-#      col = "purple")
-# text(x = dfna$lrl[which.min(pla$fit > 0.5)],
-#      y = 1.4,
-#      pos = 4,
-#      paste0("CANG ",round(adcangerror,2)*100,"% CACK ",round(adcackerror,2)*100,"%"),
-#      col = "darkorange")
-# text(x = dfni$lrl[which.min(pli$fit > 0.5)],
-#      y = 1.4,
-#      pos = 2,
-#      paste0("CANG ",round(imcangerror,2)*100,"% CACK ",round(imcackerror,2)*100,"%"),
-#      col = "purple")
-# 
-# 
-# 
-
-
-
-
-# ### logistic-regression
-# var.mod <- c("species","crl","lrl","mlrl","long","age","dhunt")
-# 
-# rs2 <- na.omit(rs[,var.mod])
-# 
-# m2 <- glm(species~lrl*long + lrl*age +dhunt,
-#           data = rs2,
-#           family = binomial(link = "logit"))
-# summary(m2)
-# 
-# 
-# rs2[,"predicted.logstc"] <- predict(m2,type = "response",
-#                                     newdata = rs2)
-# cv2 <- cv.glm(data = rs2,
-#               glmfit = m2)
-# cv2$delta
-# 
-# x11()
-# plot(rs2$species,rs2$predicted.logstc)
-# summary(m2)
-# summary(m2)$aic
-# rs2$predsp <- "canadensis"
-# rs2[which(rs2$predicted.logstc > 0.5),"predsp"] <- "hutchinsii"
-# table(rs2[,c("species","predsp")])
-# 
-# 
-# 
-# ### logistic-regression
-# var.mod <- c("species","crl","lrl","crd","lrd","long","age","dhunt")
-# 
-# rs2d <- na.omit(rs[,var.mod])
-# 
-# m2d <- glm(species~lrl*long + lrl*age + lrd*age,# +dhunt,
-#           data = rs2d,
-#           family = binomial(link = "logit"))
-# rs2d[,"predicted.logstc"] <- predict(m2d,type = "response",
-#                                     newdata = rs2d)
-# cv2d <- cv.glm(data = rs2d,
-#               glmfit = m2d)
-# cv2d$delta
-# 
-# x11()
-# plot(rs2d$species,rs2d$predicted.logstc)
-# summary(m2d)
-# summary(m2d)$aic
-# rs2d$predsp <- "canadensis"
-# rs2d[which(rs2d$predicted.logstc > 0.5),"predsp"] <- "hutchinsii"
-# table(rs2d[,c("species","predsp")])
-# 
-# ### logistic-regression
-# var.mod <- c("species","crl","lrl","mlrl","long","age","dhunt")
-# 
-# rs3 <- na.omit(rs[,var.mod])
-# 
-# m3 <- glm(species~mlrl*long + mlrl*age +dhunt,
-#           data = rs3,
-#           family = binomial(link = "logit"))
-# rs3[,"predicted.logstc"] <- predict(m3,type = "response",
-#                                     newdata = rs3)
-# cv3 <- cv.glm(data = rs3,
-#               glmfit = m3)
-# cv3$delta
-# x11()
-# plot(rs3$species,rs3$predicted.logstc)
-# summary(m3)
-# summary(m3)$aic
-# rs3$predsp <- "canadensis"
-# rs3[which(rs3$predicted.logstc > 0.5),"predsp"] <- "hutchinsii"
-# table(rs3[,c("species","predsp")])
-
-##############
-
-
 ############## final logisitic regression prediction models
 
 
@@ -1453,7 +1252,7 @@ imcangfcack <- confmat["Branta canadensis","Branta hutchinsii","Immature"]
 imcackfcang <- confmat["Branta hutchinsii","Branta canadensis","Immature"]
 imerror <- sum(c(imcangfcack,imcackfcang))/sum(confmat[,,"Immature"])
 imerror
-#[1] 0.1519608 - similar to values from random forest below
+#[1] 0.1435644- similar to values from random forest below
 imcangerror <- imcangfcack/sum(confmat["Branta canadensis",,"Immature"])
 imcackerror <- imcackfcang/sum(confmat["Branta hutchinsii",,"Immature"])
 
@@ -1463,10 +1262,10 @@ aderror <- sum(c(adcangfcack,adcackfcang))/sum(confmat[,,"Adult"])
 adcangerror <- adcangfcack/sum(confmat["Branta canadensis",,"Adult"])
 adcackerror <- adcackfcang/sum(confmat["Branta hutchinsii",,"Adult"])
 aderror
-#[1] 0.03244006 - similar to values from random forest below
+#[1] 0.02953586- similar to values from random forest below
 cangerror <- sum(c(adcangfcack,imcangfcack))/sum(confmat["Branta canadensis",,])
 cangerror
-# [1] 0.03776224
+# [1] 0.03636364
 cackerror <- sum(c(adcackfcang,imcackfcang))/sum(confmat["Branta hutchinsii",,])
 cackerror
 # [1] 0.1363636
