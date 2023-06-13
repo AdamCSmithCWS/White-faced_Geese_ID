@@ -1,0 +1,44 @@
+short name,Data Column,Field description
+type,Sample type,See description below
+,Count,unimportant for analysis
+,BOLD database sequence,unimportant for analysis
+,Data entry Sequence,unimportant for analysis
+,Box Number,unimportant for analysis
+,microplate ID,unimportant for analysis
+,Well ID (for Jessica),unimportant for analysis
+,Plate Count,unimportant for analysis
+,NHS sequence number (BOLD Sample ID),Sample ID
+sporig,spp,unimportant for analysis
+,sequence,unimportant for analysis
+,Label year,unimportant for analysis
+date,Date,Havest Date
+year,Harvest Year,Harvest Year
+,Age trait bee,unimportant for analysis
+age,Age Bee,Age (ID'd by checker)
+sex,Sex,"All ""unknown"" for NHS but Jim collected this info"
+prov,KILLPROV,Province of kill
+lat,Lat DD,Latitude of Kill
+long,LongDD,Longtitude of kill
+crl,Central Rectrix Length,mm
+crd, Central Rectrix  Quill Dia ,based on drill bit gauge ruler
+crcode, Central Moult code ,"used to flag moult presence (and progression…1 to 5) and as well whether the missing is ""missing"" or ""damaged"". "
+lrl,Longest Rectrix Length,mm
+lrd,Longest Rectrix Quill Dia ,based on drill bit gauge ruler
+lrcode,Longest Moult code,"used to flag moult presence (and progression…1 to 5) and as well whether the missing is ""missing"" or ""damaged"". "
+mlrl,Most lateral Rectrix Length,mm
+mlrd,Most lateral Rectrix Quill Dia,based on drill bit gauge ruler
+mlrcode,Most Lateral Moult code,"used to flag moult presence (and progression…1 to 5) and as well whether the missing is ""missing"" or ""damaged"". "
+comment,"Comment (e.g., missing feather)",
+jid,Jim ID#,"Sample ID, same as above"
+jdate,Jim Date,"Kill date, same as above"
+jage,Jim Age,"Sample age, same as above"
+jsp,Jim Species,"Species ID, based on Jim's observations"
+jskull,Jim Skull length (mm),
+,Jim 2nd measurement,
+jcrl,Jim CR length (entered at NWRC),Jim's measured of Central rectrix length
+jcrd,Jim CR QD (entered at NWRC),Jim's measured of Central rectrix diameter
+jcomment,Jim notes,
+diff,Difference between NWRC and Jim measurement,
+species,Inferred Species Identification (BOLD ID engine),Barcode Species ID
+,BOLD Processid,unimportant for analysis
+,rechecked?,
