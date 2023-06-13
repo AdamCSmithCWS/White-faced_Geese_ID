@@ -1,8 +1,8 @@
 ##### CANG CACK identification from feather measures
 library(tidyverse)
 library(randomForest)
-library(boot)
-
+library(boot) # for the cross-validation glm function (cv.glm())
+library(scales) #for the transparency function
 
 rs <- readRDS("data/all_tail_measures_2015.rds")
 dfjm <- readRDS("data/MB_data_JimLeafloor.rds")
@@ -120,18 +120,18 @@ mt3 <- glm(species ~ prov + mlrl*age + mlrd + dhunt*prov,
 # > summary(mt3)$aic
 # [1] 210.4609
 # > 
-# cvt1 <- cv.glm(data = rstmp,
-#           glmfit = mt1)
-# cvt2 <- cv.glm(data = rstmp,
-#                glmfit = mt2)
-# cvt3 <- cv.glm(data = rstmp,
-#                glmfit = mt3)
-#  cvt1$delta
-# # [1] 0.04542831 0.04542445
-#  cvt2$delta
-# # [1] 0.04939468 0.04939054
-#  cvt3$delta
-# # [1] 0.04729543 0.04729200
+cvt1 <- cv.glm(data = rstmp,
+          glmfit = mt1)
+cvt2 <- cv.glm(data = rstmp,
+               glmfit = mt2)
+cvt3 <- cv.glm(data = rstmp,
+               glmfit = mt3)
+ cvt1$delta
+# [1] 0.04542831 0.04542445
+ cvt2$delta
+# [1] 0.04939468 0.04939054
+ cvt3$delta
+# [1] 0.04729543 0.04729200
  
 #library(randomForest)
 
@@ -385,7 +385,7 @@ summary(m1d)
 summary(m1d)$aic
 rs1d$predsp.m1d <- "Branta canadensis"
 rs1d[which(rs1d$predicted.m1d > 0.5),"predsp.m1d"] <- "Branta hutchinsii"
-table(rs1d[,c("species","predsp","age","prov")])
+table(rs1d[,c("species","predsp.m1d","age","prov")])
 
 
 
@@ -456,7 +456,7 @@ summary(m2d)
 summary(m2d)$aic
 rs2d$predsp.m2d <- "Branta canadensis"
 rs2d[which(rs2d$predicted.m2d > 0.5),"predsp.m2d"] <- "Branta hutchinsii"
-table(rs2d[,c("species","predsp","age","prov")])
+table(rs2d[,c("species","predsp.m2d","age","prov")])
 
 
 dfjm$predicted.m2d <- predict(m2d,
@@ -999,7 +999,7 @@ dev.off()
 
 
 
-#################### exploring the best logistic regression model
+# exploring the best logistic regression model ----------------
 
 ### lowest cross validation error = m2
 
@@ -1055,7 +1055,7 @@ for(a in levels(param.spacel$age)){
   tmp <- rs[which(rs$age == a),]
   points(x = tmp$lrl,
          y = (as.integer(tmp$species)-1)+runif(length(tmp$lrl),min = -0.03,0.03),
-         col = transp.func(colsa[a],0.5))
+         col = alpha(colsa[a],0.5))
   
   
 }#a
@@ -1099,7 +1099,7 @@ for(p in levels(param.spacel$prov)){
   tmp <- rs[which(rs$prov == p),]
   points(x = tmp$dhunt,
          y = (as.integer(tmp$species)-1)+runif(length(tmp$lrl),min = -0.03,0.03),
-         col = transp.func(colsp[p],0.9))
+         col = alpha(colsp[p],0.9))
   
 }#p
 
@@ -1160,17 +1160,17 @@ for(a in levels(param.spaced$age)){
   tmp <- rs[which(rs$age == a),]
   points(x = tmp$lrd,
          y = (as.integer(tmp$species)-1)+runif(length(tmp$lrd),min = -0.03,0.03),
-         col = transp.func(colsa[a],0.5))
+         col = alpha(colsa[a],0.5))
   
   
 }#a
 
 
 
-cov.plot(rs[,c("species",
-               "lrl","crl","mlrl",
-               "lrd","crd","mlrd")],
-         incvif = F)
+# cov.plot(rs[,c("species",
+#                "lrl","crl","mlrl",
+#                "lrd","crd","mlrd")],
+#          incvif = F)
 
 
 
@@ -1275,12 +1275,12 @@ cov.plot(rs[,c("species",
 # 
 # polygon(x = c(dfna$lrl,rev(dfna$lrl)),
 #         y = 1+c((pla$fit-1.96*pla$se.fit),rev(pla$fit+1.96*pla$se.fit)),
-#         col = transp.func("darkorange",0.1),
+#         col = alpha("darkorange",0.1),
 #         border = NA)
 # 
 # polygon(x = c(dfni$lrl,rev(dfni$lrl)),
 #         y = 1+c((pli$fit-1.96*pli$se.fit),rev(pli$fit+1.96*pli$se.fit)),
-#         col = transp.func("purple",0.1),
+#         col = alpha("purple",0.1),
 #         border = NA)
 # 
 # lines(y = 1+pla$fit,
@@ -1296,10 +1296,10 @@ cov.plot(rs[,c("species",
 #        col = rs4$plotcol)
 # lines(x = rep(dfna$lrl[which.min(pla$fit > 0.5)],2),
 #       y = c(1,2),
-#       col = transp.func("darkorange",0.5))
+#       col = alpha("darkorange",0.5))
 # lines(x = rep(dfni$lrl[which.min(pli$fit > 0.5)],2),
 #       y = c(1,2),
-#       col = transp.func("purple",0.5))
+#       col = alpha("purple",0.5))
 # text(x = dfna$lrl[which.min(pla$fit > 0.5)],
 #      y = 1.5,
 #      pos = 4,
@@ -1524,12 +1524,12 @@ for(p in levels(dfna1$prov)){
   
   polygon(x = c(dfna$lrl,rev(dfna$lrl)),
         y = 1+c((pla$fit-1.96*pla$se.fit),rev(pla$fit+1.96*pla$se.fit)),
-        col = transp.func("darkorange",0.3),
+        col = alpha("darkorange",0.3),
         border = NA)
 
 polygon(x = c(dfni$lrl,rev(dfni$lrl)),
         y = 1+c((pli$fit-1.96*pli$se.fit),rev(pli$fit+1.96*pli$se.fit)),
-        col = transp.func("purple",0.3),
+        col = alpha("purple",0.3),
         border = NA)
 
 lines(y = 1+pla$fit,
@@ -1545,10 +1545,10 @@ points(y = rs4$spplot,
      col = rs4$plotcol)
 lines(x = rep(dfna$lrl[which.min(pla$fit > 0.5)],2),
       y = c(1,2),
-      col = transp.func("darkorange",0.5))
+      col = alpha("darkorange",0.5))
 lines(x = rep(dfni$lrl[which.min(pli$fit > 0.5)],2),
       y = c(1,2),
-      col = transp.func("purple",0.5))
+      col = alpha("purple",0.5))
 
 text(x = dfna$lrl[which.min(pla$fit > 0.5)],
      y = 1.3+(which(levels(dfna1$prov) == p)/10),
@@ -1632,12 +1632,12 @@ for(p in levels(dfna1$prov)){
   
   polygon(x = c(dfna$lrl,rev(dfna$lrl)),
           y = 1+c((pla$fit-1.96*pla$se.fit),rev(pla$fit+1.96*pla$se.fit)),
-          col = transp.func("darkorange",0.3),
+          col = alpha("darkorange",0.3),
           border = NA)
   
   polygon(x = c(dfni$lrl,rev(dfni$lrl)),
           y = 1+c((pli$fit-1.96*pli$se.fit),rev(pli$fit+1.96*pli$se.fit)),
-          col = transp.func("purple",0.3),
+          col = alpha("purple",0.3),
           border = NA)
   
   lines(y = 1+pla$fit,
@@ -1684,29 +1684,29 @@ for(p in levels(dfna1$prov)){
   
   lines(x = rep(dfna$lrl[which.min(pla$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.7),
+        col = alpha("darkorange",0.7),
         lwd = 2)
   
 
   lines(x = rep(dfni$lrl[which.min(pli$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("purple",0.7),
+        col = alpha("purple",0.7),
         lwd = 2)
 
   lines(x = rep(dfna$lrl[which.min(pla$fit > 0.75)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.3))
+        col = alpha("darkorange",0.3))
   lines(x = rep(dfni$lrl[which.min(pli$fit > 0.75)],2),
         y = c(1,2),
-        col = transp.func("purple",0.3))
+        col = alpha("purple",0.3))
 
   
   lines(x = rep(dfna$lrl[which.min(pla$fit > 0.25)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.3))
+        col = alpha("darkorange",0.3))
   lines(x = rep(dfni$lrl[which.min(pli$fit > 0.25)],2),
         y = c(1,2),
-        col = transp.func("purple",0.3))
+        col = alpha("purple",0.3))
   
   text(x = dfna$lrl[which.min(pla$fit > 0.5)],
        y = 1.4+(which(levels(dfna1$prov) == p)/10),
@@ -1866,12 +1866,12 @@ for(p in levels(dfna1$prov)){
   
   polygon(x = c(dfna$crl,rev(dfna$crl)),
           y = 1+c((pla$fit-1.96*pla$se.fit),rev(pla$fit+1.96*pla$se.fit)),
-          col = transp.func("darkorange",0.3),
+          col = alpha("darkorange",0.3),
           border = NA)
   
   polygon(x = c(dfni$crl,rev(dfni$crl)),
           y = 1+c((pli$fit-1.96*pli$se.fit),rev(pli$fit+1.96*pli$se.fit)),
-          col = transp.func("purple",0.3),
+          col = alpha("purple",0.3),
           border = NA)
   
   lines(y = 1+pla$fit,
@@ -1887,10 +1887,10 @@ for(p in levels(dfna1$prov)){
          col = rs4c$plotcol)
   lines(x = rep(dfna$crl[which.min(pla$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.5))
+        col = alpha("darkorange",0.5))
   lines(x = rep(dfni$crl[which.min(pli$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("purple",0.5))
+        col = alpha("purple",0.5))
   
   text(x = dfna$crl[which.min(pla$fit > 0.5)],
        y = 1.3+(which(levels(dfna1$prov) == p)/10),
@@ -1967,12 +1967,12 @@ for(p in levels(dfna1$prov)){
   
   polygon(x = c(dfna$crl,rev(dfna$crl)),
           y = 1+c((pla$fit-1.96*pla$se.fit),rev(pla$fit+1.96*pla$se.fit)),
-          col = transp.func("darkorange",0.3),
+          col = alpha("darkorange",0.3),
           border = NA)
   
   polygon(x = c(dfni$crl,rev(dfni$crl)),
           y = 1+c((pli$fit-1.96*pli$se.fit),rev(pli$fit+1.96*pli$se.fit)),
-          col = transp.func("purple",0.3),
+          col = alpha("purple",0.3),
           border = NA)
   
   lines(y = 1+pla$fit,
@@ -2020,27 +2020,27 @@ for(p in levels(dfna1$prov)){
   
   lines(x = rep(dfna$crl[which.min(pla$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.7),
+        col = alpha("darkorange",0.7),
         lwd = 2)
   lines(x = rep(dfni$crl[which.min(pli$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("purple",0.7),
+        col = alpha("purple",0.7),
         lwd = 2)
   
   lines(x = rep(dfna$crl[which.min(pla$fit > 0.75)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.3))
+        col = alpha("darkorange",0.3))
   lines(x = rep(dfni$crl[which.min(pli$fit > 0.75)],2),
         y = c(1,2),
-        col = transp.func("purple",0.3))
+        col = alpha("purple",0.3))
   
   
   lines(x = rep(dfna$crl[which.min(pla$fit > 0.25)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.3))
+        col = alpha("darkorange",0.3))
   lines(x = rep(dfni$crl[which.min(pli$fit > 0.25)],2),
         y = c(1,2),
-        col = transp.func("purple",0.3))
+        col = alpha("purple",0.3))
   
   text(x = dfna$crl[which.min(pla$fit > 0.5)],
        y = 1.4+(which(levels(dfna1$prov) == p)/10),
@@ -2199,12 +2199,12 @@ for(p in levels(dfna1$prov)){
   
   polygon(x = c(dfna$mlrl,rev(dfna$mlrl)),
           y = 1+c((pla$fit-1.96*pla$se.fit),rev(pla$fit+1.96*pla$se.fit)),
-          col = transp.func("darkorange",0.3),
+          col = alpha("darkorange",0.3),
           border = NA)
   
   polygon(x = c(dfni$mlrl,rev(dfni$mlrl)),
           y = 1+c((pli$fit-1.96*pli$se.fit),rev(pli$fit+1.96*pli$se.fit)),
-          col = transp.func("purple",0.3),
+          col = alpha("purple",0.3),
           border = NA)
   
   lines(y = 1+pla$fit,
@@ -2220,10 +2220,10 @@ for(p in levels(dfna1$prov)){
          col = rs4m$plotcol)
   lines(x = rep(dfna$mlrl[which.min(pla$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.5))
+        col = alpha("darkorange",0.5))
   lines(x = rep(dfni$mlrl[which.min(pli$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("purple",0.5))
+        col = alpha("purple",0.5))
   
   text(x = dfna$mlrl[which.min(pla$fit > 0.5)],
        y = 1.3+(which(levels(dfna1$prov) == p)/10),
@@ -2299,12 +2299,12 @@ for(p in levels(dfna1$prov)){
   
   polygon(x = c(dfna$mlrl,rev(dfna$mlrl)),
           y = 1+c((pla$fit-1.96*pla$se.fit),rev(pla$fit+1.96*pla$se.fit)),
-          col = transp.func("darkorange",0.3),
+          col = alpha("darkorange",0.3),
           border = NA)
   
   polygon(x = c(dfni$mlrl,rev(dfni$mlrl)),
           y = 1+c((pli$fit-1.96*pli$se.fit),rev(pli$fit+1.96*pli$se.fit)),
-          col = transp.func("purple",0.3),
+          col = alpha("purple",0.3),
           border = NA)
   
   lines(y = 1+pla$fit,
@@ -2352,27 +2352,27 @@ for(p in levels(dfna1$prov)){
   
   lines(x = rep(dfna$mlrl[which.min(pla$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.7),
+        col = alpha("darkorange",0.7),
         lwd = 2)
   lines(x = rep(dfni$mlrl[which.min(pli$fit > 0.5)],2),
         y = c(1,2),
-        col = transp.func("purple",0.7),
+        col = alpha("purple",0.7),
         lwd = 2)
   
   lines(x = rep(dfna$mlrl[which.min(pla$fit > 0.75)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.3))
+        col = alpha("darkorange",0.3))
   lines(x = rep(dfni$mlrl[which.min(pli$fit > 0.75)],2),
         y = c(1,2),
-        col = transp.func("purple",0.3))
+        col = alpha("purple",0.3))
   
   
   lines(x = rep(dfna$mlrl[which.min(pla$fit > 0.25)],2),
         y = c(1,2),
-        col = transp.func("darkorange",0.3))
+        col = alpha("darkorange",0.3))
   lines(x = rep(dfni$mlrl[which.min(pli$fit > 0.25)],2),
         y = c(1,2),
-        col = transp.func("purple",0.3))
+        col = alpha("purple",0.3))
   
   text(x = dfna$mlrl[which.min(pla$fit > 0.5)],
        y = 1.4+(which(levels(dfna1$prov) == p)/10),
